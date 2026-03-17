@@ -1379,13 +1379,19 @@ function moveItem(qid,idx,zi){
 function optClick(e,qid,idx,type){
   e.stopPropagation();
   if(examMode==='tutor'){
-    // In tutor mode: write to selections (not answers) until Submit is clicked
     if(answers[qid]!==undefined)return; // already submitted, locked
+    // If eliminated, un-eliminate and select in one tap
+    if(elim[qid] instanceof Set&&elim[qid].has(idx)){
+      elim[qid].delete(idx);
+    }
     if(!selections[qid])selections[qid]=[];
     if(type==='mcq')selections[qid]=[idx];
     else{if(selections[qid].includes(idx))selections[qid]=selections[qid].filter(x=>x!==idx);else selections[qid].push(idx);}
   }else{
-    // In test mode: write directly to answers
+    // If eliminated, un-eliminate and select in one tap
+    if(elim[qid] instanceof Set&&elim[qid].has(idx)){
+      elim[qid].delete(idx);
+    }
     if(!answers[qid])answers[qid]=[];
     if(type==='mcq')answers[qid]=[idx];
     else{if(answers[qid].includes(idx))answers[qid]=answers[qid].filter(x=>x!==idx);else answers[qid].push(idx);}
@@ -1402,6 +1408,9 @@ function fiSet(qid,val){if(examMode==='tutor'&&answers[qid]!==undefined)return;i
 
 function toggleElim(e,qid,idx){
   e.stopPropagation();
+  // Can't eliminate a selected option
+  const currentSel=examMode==='tutor'?(selections[qid]||[]):(answers[qid]||[]);
+  if(Array.isArray(currentSel)&&currentSel.includes(idx))return;
   if(!elim[qid])elim[qid]=new Set();
   else if(!(elim[qid] instanceof Set))elim[qid]=new Set(elim[qid]);
   elim[qid].has(idx)?elim[qid].delete(idx):elim[qid].add(idx);
