@@ -976,6 +976,7 @@ function startExam(){
   const f=getFiltered();if(!f.length){alert('Please select at least one topic.');return;}
   const req=Math.min(parseInt(document.getElementById('num-q').value)||35,f.length);
   const pool=document.getElementById('q-order').value==='shuffle'?shuffle(f):[...f];
+  activeQs=pool.slice(0,req);curQ=0;answers={};selections={};guessed={};elim={};highlights={};examEnded=false;hlMode=false;
   if(examMode==='test'){const mpq=parseFloat(document.getElementById('mins-per-q').value)||2;timerTotal=Math.round(mpq*req*60);timerLeft=timerTotal;}
   try{localStorage.removeItem(SK);}catch(e){}
   document.getElementById('start-screen').style.display='none';
