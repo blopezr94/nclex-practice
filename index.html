@@ -101,9 +101,8 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
 .filt-btn.muted:hover{color:var(--bad);border-color:var(--bad-b);background:var(--bad-bg)}
 
 /* Collapsible class section */
-.class-section{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r12);margin-bottom:.75rem;overflow:hidden;box-shadow:var(--shadow)}
-.class-section-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;gap:10px;flex-wrap:wrap;cursor:pointer;user-select:none;transition:background .12s}
-.class-section-header:hover{background:var(--bgs)}
+.class-section{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r12);margin-bottom:.75rem;overflow:visible;box-shadow:var(--shadow)}
+.class-section-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;gap:10px;flex-wrap:wrap;transition:background .12s}
 .class-section-header.open{border-bottom:.5px solid var(--bd)}
 .class-section-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;min-width:0}
 .class-name{font-size:14px;font-weight:500;color:var(--tp)}
@@ -119,7 +118,7 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
 .class-btn:hover{background:var(--bgs);color:var(--tp)}
 .class-btn.sel-all{border-color:var(--acc-m);color:var(--acc);background:var(--acc-l)}
 .class-btn.sel-all:hover{background:var(--acc-m)}
-.class-section-body{display:none}
+.class-section-body{display:none;overflow:visible}
 .class-section-body.open{display:block}
 .class-quick-filters{padding:.6rem 1rem;border-bottom:.5px solid var(--bd);background:var(--bgs);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .qf-label{font-size:11px;color:var(--tl);font-weight:500;margin-right:2px;white-space:nowrap}
@@ -322,9 +321,9 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
 .di.ok{background:var(--ok-bg);border-color:var(--ok-b);color:var(--ok)}
 .di.bad{background:var(--bad-bg);border-color:var(--bad-b);color:var(--bad)}
 .dz-zone-lbl{font-size:12px;font-weight:500;color:var(--ts);margin-bottom:6px;text-align:center}
-/* Ordering (drag-to-order) */
+/* Ordering */
 .ord-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
-.ord-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:var(--r8);background:var(--bg);font-size:14px;color:var(--tp);user-select:none;touch-action:none;cursor:grab;min-height:44px;transition:all .12s}
+.ord-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:var(--r8);background:var(--bg);font-size:14px;color:var(--tp);user-select:none;cursor:grab;min-height:44px;transition:all .12s}
 .ord-item:active{cursor:grabbing}
 .ord-item.dragging{opacity:.4}
 .ord-num{font-size:12px;font-family:'DM Mono',monospace;color:var(--tl);min-width:18px;text-align:center;flex-shrink:0}
@@ -334,6 +333,38 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
 .ord-correct-title{font-size:12px;font-weight:500;color:var(--ok);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
 .ord-correct-item{font-size:13px;color:var(--ok);padding:3px 0;display:flex;gap:8px}
 .ord-correct-num{font-family:'DM Mono',monospace;min-width:18px;flex-shrink:0}
+/* Structure + filter bar */
+.struct-bar{padding:.5rem 1rem;border-bottom:.5px solid var(--bd);background:var(--bgs);display:flex;flex-wrap:wrap;gap:6px;align-items:center;overflow:visible;position:relative}
+.struct-panel-btn{font-size:12px;padding:4px 12px;border-radius:var(--r8);border:1.5px solid var(--bds);cursor:pointer;background:var(--bgs);color:var(--ts);transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.struct-panel-btn:hover{background:var(--bgs);color:var(--tp)}
+.struct-panel-btn.active{border-color:var(--acc-m);background:var(--acc-l);color:var(--acc)}
+.struct-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 8px 3px 10px;border-radius:var(--r20);background:var(--acc-l);border:1px solid var(--acc-m);color:var(--acc);font-weight:500}
+.struct-pill-x{cursor:pointer;opacity:.7;font-size:11px;padding:1px 3px;border-radius:3px}
+.struct-pill-x:hover{opacity:1;background:var(--acc-m)}
+.struct-sep{width:.5px;height:14px;background:var(--bd);margin:0 2px;flex-shrink:0}
+.struct-dropdown{position:absolute;z-index:200;background:var(--bgd);border:1px solid var(--bd);border-radius:var(--r8);box-shadow:0 8px 24px rgba(0,0,0,.25);padding:6px 0;min-width:210px;max-height:320px;overflow-y:auto}
+.struct-dropdown-item{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;cursor:pointer;font-size:13px;color:var(--tp);gap:12px;transition:background .1s}
+.struct-dropdown-item:hover{background:var(--bgs)}
+.struct-dropdown-item.checked{color:var(--acc)}
+.struct-dropdown-check{width:14px;height:14px;border-radius:4px;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0}
+.struct-dropdown-item.checked .struct-dropdown-check{background:var(--acc);border-color:var(--acc);color:#fff}
+.struct-dropdown-count{font-size:11px;color:var(--tl);font-family:'DM Mono',monospace;white-space:nowrap}
+.struct-dropdown-item.checked .struct-dropdown-count{color:var(--acc-m)}
+.struct-section-label{font-size:10px;font-weight:600;color:var(--tl);text-transform:uppercase;letter-spacing:.08em;padding:6px 14px 2px}
+/* Topics toggle */
+.topics-toggle{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;border-bottom:.5px solid var(--bd);cursor:pointer;user-select:none;background:var(--bg);transition:background .12s}
+.topics-toggle:hover{background:var(--bgs)}
+.topics-toggle-left{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ts)}
+.topics-toggle-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--acc);font-weight:500}
+.topics-toggle-arrow{font-size:11px;color:var(--tl);transition:transform .2s}
+.topics-toggle-arrow.open{transform:rotate(180deg)}
+.topics-body{display:none}
+.topics-body.open{display:block}
+/* Topic badge */
+.topic-badge{font-size:10px;font-family:'DM Mono',monospace;color:var(--tl);margin-left:auto;opacity:.8;flex-shrink:0}
+.topic-chip.on .topic-badge{color:var(--acc);opacity:.7;font-weight:600}
+.topic-chip.partial{background:var(--acc-l);border-color:var(--acc-m);opacity:.7}
+.topic-chip.partial .topic-badge{color:var(--acc);font-weight:600}
 /* Results */
 .res-score-card{text-align:center;padding:2rem 1.5rem 1.5rem;background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r16);box-shadow:var(--shadow);margin-bottom:1rem}
 .score-pct{font-size:56px;font-weight:500;letter-spacing:-2px;font-family:'DM Mono',monospace}
@@ -515,23 +546,19 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
     <div class="mode-grid">
       <div class="mode-card tutor sel" id="mode-tutor" onclick="setMode('tutor')">
         <div class="mode-sel-dot"></div>
-        <div class="mode-header"><span class="mode-emoji">📖</span><span class="mode-title">Tutor mode</span></div>
-        <div class="mode-tagline">See the correct answer and explanation after each question.</div>
+        <div class="mode-header"><span class="mode-emoji">📖</span><span class="mode-title">Tutor Mode</span></div>
         <ul class="mode-features">
-          <li>Select your answer then hit Submit</li>
+          <li>Rationales after each question</li>
           <li>Navigate back and forward freely</li>
-          <li>Labels shown after you submit</li>
           <li>No time limit</li>
         </ul>
       </div>
       <div class="mode-card test" id="mode-test" onclick="setMode('test')">
         <div class="mode-sel-dot"></div>
-        <div class="mode-header"><span class="mode-emoji">🎯</span><span class="mode-title">Test mode</span></div>
-        <div class="mode-tagline">Exam conditions — no feedback until the end.</div>
+        <div class="mode-header"><span class="mode-emoji">🎯</span><span class="mode-title">Exam Mode</span></div>
         <ul class="mode-features">
-          <li>Must answer before moving forward</li>
           <li>Forward-only navigation</li>
-          <li>Labels hidden until results</li>
+          <li>No feedback until the end</li>
           <li>Countdown timer</li>
         </ul>
       </div>
@@ -552,11 +579,11 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
     <div class="format-grid" id="format-grid"></div>
 
     <!-- STATUS FILTER -->
-    <div class="sec-label" style="margin-top:1.25rem">Question status</div>
+    <div class="sec-label" style="margin-top:1.25rem;display:flex;align-items:center;justify-content:space-between">Question status<button class="class-btn" style="font-size:11px;text-transform:none;letter-spacing:0" onclick="resetStatusForClass()">Reset</button></div>
     <div class="status-filter-wrap" id="status-filter"></div>
 
     <!-- TOPIC FILTER -->
-    <div class="sec-label" style="margin-top:1rem">Topics</div>
+    <div class="sec-label" style="margin-top:1rem;display:none" id="topics-sec-label">Topics</div>
     <div class="filter-toolbar" id="topic-toolbar">
       <div class="filter-toolbar-left">
         <div class="filter-summary" id="filter-summary"></div>
@@ -668,7 +695,7 @@ function hasAnswer(q,ans){
     case'bowtie':return ans.condition!==null&&ans.condition!==undefined;
     case'matrix':return Object.keys(ans).length>0;
     case'fillin':return typeof ans==='string'&&ans.trim().length>0;
-    case'drag':return q.correctOrder ? (ans||[]).length>0 : Object.values(ans||{}).flat().length>0;
+    case'drag':return q.correctOrder?(ans||[]).length>0:Object.values(ans||{}).flat().length>0;
     default:return ans!==null&&ans!==undefined;
   }
 }
@@ -698,6 +725,7 @@ function toggleFormat(key){
 let selTopics=new Set();
 let collapsedClasses=new Set(); // classes currently collapsed
 let collapsedEcg=new Set();     // classes where ECG subsection is collapsed
+let openTopics=new Set();        // classes where topics body is expanded
 
 const allClasses=()=>[...new Set(BANK.map(q=>q.class))].sort();
 const topicsForClass=cls=>[...new Set(BANK.filter(q=>q.class===cls).map(q=>q.topic))].sort();
@@ -714,7 +742,7 @@ const examMatch=(q,exam)=>Array.isArray(q.exam)?q.exam.includes(exam):q.exam===e
 const topicsByExam=(cls,exam)=>[...new Set(BANK.filter(q=>q.class===cls&&examMatch(q,exam)).map(q=>q.topic))];
 const topicsBySystem=(cls,sys)=>[...new Set(BANK.filter(q=>q.class===cls&&(Array.isArray(q.system)?q.system.includes(sys):q.system===sys)).map(q=>q.topic))];
 
-// ID-based chapter map — only verified textbook questions (Sole 8th ed.)
+// ── ID-based chapter map (Sole 8th ed. verified textbook questions only) ──
 const CHAPTER_ID_MAP={
   331:5,332:5,333:5,334:5,335:5,336:5,337:5,338:5,339:5,
   201:6,202:6,203:6,204:6,205:6,206:6,207:6,208:6,209:6,210:6,
@@ -766,17 +794,103 @@ const CHAPTER_ID_MAP={
   682:20,683:20,684:20,685:20,686:20,687:20,688:20,689:20,690:20,691:20,
   692:20,693:20,694:20,695:20,696:20,697:20,698:20,
 };
-const chaptersForClass=cls=>{const s=new Set();BANK.filter(q=>q.class===cls).forEach(q=>{const ch=CHAPTER_ID_MAP[q.id];if(ch)s.add(ch);});return[...s].sort((a,b)=>a-b);};
-const topicsByChapter=(cls,ch)=>[...new Set(BANK.filter(q=>q.class===cls&&CHAPTER_ID_MAP[q.id]===ch).map(q=>q.topic))];
-function getChapterQIds(cls,ch){return BANK.filter(q=>q.class===cls&&CHAPTER_ID_MAP[q.id]===ch).map(q=>q.id);}
-function chapterSelState(cls,ch){const ids=getChapterQIds(cls,ch),topics=[...new Set(BANK.filter(q=>ids.includes(q.id)).map(q=>q.topic))];return topics.length>0&&topics.every(t=>selTopics.has(t));}
-function quickSelectChapter(cls,ch){
-  const ids=getChapterQIds(cls,ch);
-  const topics=[...new Set(BANK.filter(q=>ids.includes(q.id)).map(q=>q.topic))];
-  const allSel=topics.every(t=>selTopics.has(t));
-  topics.forEach(t=>allSel?selTopics.delete(t):selTopics.add(t));
-  saveSettings();refreshClassSection(cls);
+const UNIT_CHAPTER_MAP={'Unit 1':[8,9,11,12,13,20],'Unit 2':[10,15,20],'Unit 3':[5,6,14],'Unit 4':[12,16,19]};
+const ALL_CHAPTERS=[5,6,8,9,10,11,12,13,14,15,16,19,20];
+const ALL_UNITS=['Unit 1','Unit 2','Unit 3','Unit 4'];
+
+// Get topics covered by a chapter (only topics with at least 1 textbook question)
+function topicsForChapter(cls,ch){
+  return[...new Set(BANK.filter(q=>q.class===cls&&CHAPTER_ID_MAP[q.id]===ch).map(q=>q.topic))];
 }
+// Get topics covered by a unit
+function topicsForUnit(cls,unit){
+  const chs=UNIT_CHAPTER_MAP[unit]||[];
+  return[...new Set(BANK.filter(q=>q.class===cls&&chs.includes(CHAPTER_ID_MAP[q.id])).map(q=>q.topic))];
+}
+// Get all textbook IDs for selected chapters+units (for ID-based pool filtering)
+function getStructureIds(cls){
+  if(!selChapters.size&&!selUnits.size)return null;
+  const chs=new Set([...selChapters,...[...selUnits].flatMap(u=>UNIT_CHAPTER_MAP[u]||[])]);
+  return new Set(BANK.filter(q=>q.class===cls&&chs.has(CHAPTER_ID_MAP[q.id])).map(q=>q.id));
+}
+// Count textbook questions per chapter/unit
+function chapterQCount(cls,ch){return BANK.filter(q=>q.class===cls&&CHAPTER_ID_MAP[q.id]===ch).length;}
+function unitQCount(cls,unit){
+  const chs=UNIT_CHAPTER_MAP[unit]||[];
+  return new Set(BANK.filter(q=>q.class===cls&&chs.includes(CHAPTER_ID_MAP[q.id])).map(q=>q.id)).size;
+}
+// Get IDs for active systems
+function getSystemIds(cls){
+  if(!selSystems.size)return null;
+  return new Set(BANK.filter(q=>{
+    if(q.class!==cls)return false;
+    const s=q.system;
+    if(Array.isArray(s))return s.some(x=>selSystems.has(x));
+    return selSystems.has(s);
+  }).map(q=>q.id));
+}
+// Get manually selected topic IDs (topics in selTopics but not already covered by ch/unit/system)
+function getTopicIds(cls){
+  if(!selTopics.size)return null;
+  return new Set(BANK.filter(q=>q.class===cls&&selTopics.has(q.topic)).map(q=>q.id));
+}
+// Combined pool: union of chapter IDs + system IDs + topic IDs
+function getPoolIds(cls){
+  const chIds=getStructureIds(cls);   // null if no ch/unit selected
+  const sysIds=getSystemIds(cls);     // null if no system selected
+  const topicIds=getTopicIds(cls);    // null if no topics selected
+  // If nothing selected at all, return null (no filter = show all)
+  if(!chIds&&!sysIds&&!topicIds)return null;
+  const pool=new Set();
+  if(chIds)chIds.forEach(id=>pool.add(id));
+  if(sysIds)sysIds.forEach(id=>pool.add(id));
+  if(topicIds)topicIds.forEach(id=>pool.add(id));
+  return pool;
+}
+
+// Badge: how many of a topic's questions are in the current structure ID pool
+function topicStructureCoverage(cls,topic){
+  // Show badge when chapters/units/systems are active and topic is only partially covered
+  const structIds=getStructureIds(cls);
+  const sysIds=getSystemIds(cls);
+  if(!structIds&&!sysIds)return null;
+  const combined=new Set([...(structIds||[]),...(sysIds||[])]);
+  const topicQs=BANK.filter(q=>q.class===cls&&q.topic===topic);
+  const inStruct=topicQs.filter(q=>combined.has(q.id)).length;
+  return{inStruct,total:topicQs.length};
+}
+
+// Structure selection state
+const selChapters=new Set();
+const selUnits=new Set();
+const selSystems=new Set();      // active system filters (ID-based)
+// Topics collapsed state per class
+const collapsedTopics=new Set(); // classes where topics body is collapsed
+
+function toggleChapter(cls,ch){
+  if(selChapters.has(ch))selChapters.delete(ch);
+  else selChapters.add(ch);
+  saveSettings();buildClassSections();updateCount();
+}
+function toggleUnit(cls,unit){
+  if(selUnits.has(unit))selUnits.delete(unit);
+  else selUnits.add(unit);
+  saveSettings();buildClassSections();updateCount();
+}
+function toggleStructDropdown(id){
+  const el=document.getElementById(id);if(!el)return;
+  const isOpen=el.style.display!=='none';
+  document.querySelectorAll('.struct-dropdown').forEach(d=>d.style.display='none');
+  if(!isOpen)el.style.display='block';
+}
+function toggleTopicsBody(cls){
+  if(openTopics.has(cls))openTopics.delete(cls);else openTopics.add(cls);
+  buildClassSections();
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.struct-panel-btn')&&!e.target.closest('.struct-dropdown'))
+    document.querySelectorAll('.struct-dropdown').forEach(d=>d.style.display='none');
+});
 const SYS_NAMES={cardiac:'Cardiac',ecg:'ECG Strips',respiratory:'Respiratory',neurological:'Neurological',gastrointestinal:'GI / Digestive',renal:'Renal / GU',hematologic:'Hematologic',endocrine:'Endocrine',immune:'Immune',integumentary:'Integumentary',musculoskeletal:'Musculoskeletal',pharmacology:'Pharmacology',psychosocial:'Psychosocial',ethics:'Ethics',general:'General'};
 function classSelectionState(cls){const t=topicsForClass(cls),n=t.filter(x=>selTopics.has(x)).length;return n===0?'none':n===t.length?'all':'some';}
 
@@ -785,7 +899,7 @@ function classSelectionState(cls){const t=topicsForClass(cls),n=t.filter(x=>selT
 // ═══════════════════════════════════════════════════════════════
 const SK='nclex_practice_v11',SK_SET='nclex_settings_v11',SK_HIST='nclex_history_v1',SK_STATUS='nclex_qstatus_v1';
 function saveSettings(){
-  try{localStorage.setItem(SK_SET,JSON.stringify({mode:examMode,mpq:document.getElementById('mins-per-q').value,numQ:document.getElementById('num-q').value,order:document.getElementById('q-order').value,formats:[...selFormats],topics:[...selTopics],collapsed:[...collapsedClasses],statuses:[...selStatuses],activeClass}));}catch(e){}
+  try{localStorage.setItem(SK_SET,JSON.stringify({mode:examMode,mpq:document.getElementById('mins-per-q').value,numQ:document.getElementById('num-q').value,order:document.getElementById('q-order').value,formats:[...selFormats],topics:[...selTopics],systems:[...selSystems],collapsed:[...collapsedClasses],statuses:[...selStatuses],activeClass}));}catch(e){}
 }
 function loadSettings(){
   try{
@@ -797,6 +911,7 @@ function loadSettings(){
     if(p.order)document.getElementById('q-order').value=p.order;
     if(p.formats){const valid=new Set(BANK.map(q=>q.type));selFormats=new Set((p.formats||[]).filter(f=>valid.has(f)));if(selFormats.size===0)selFormats=new Set(valid);}
     if(p.topics){const valid=new Set(BANK.map(q=>q.topic));selTopics=new Set((p.topics||[]).filter(t=>valid.has(t)));}
+    if(p.systems){const validSys=new Set(BANK.flatMap(q=>Array.isArray(q.system)?q.system:[q.system]).filter(Boolean));selSystems=new Set((p.systems||[]).filter(s=>validSys.has(s)));}
     if(p.collapsed)collapsedClasses=new Set(p.collapsed);
     if(p.statuses)selStatuses=new Set(p.statuses);
     if(p.activeClass!==undefined)activeClass=p.activeClass;
@@ -833,6 +948,13 @@ function getClassStats(cls){
   const stats={unused:0,correct:0,partial:0,incorrect:0,total:qs.length};
   qs.forEach(q=>{const s=getQStatus(q.id);stats[s]=(stats[s]||0)+1;});
   return stats;
+}
+function resetStatusForClass(){
+  const cls=activeClass;
+  resetClassStatus(cls||'all');
+  buildStatusFilter();
+  updateCount();
+  buildClassSections();
 }
 function resetClassStatus(cls){
   const qs=cls==='all'?BANK:BANK.filter(q=>q.class===cls);
@@ -939,6 +1061,9 @@ function showBuilder(cls){
   // Show global select/clear only on "All Classes" view
   const globalBtns=document.getElementById('global-topic-btns');
   if(globalBtns)globalBtns.style.display=cls?'none':'flex';
+  // Show Topics sec-label only in All Classes view (single class has it inside the section)
+  const topicsLabel=document.getElementById('topics-sec-label');
+  if(topicsLabel)topicsLabel.style.display=cls?'none':'block';
   applyMode();buildFormatGrid();buildStatusFilter();buildClassSections();updateCount();
   saveSettings();
 }
@@ -1003,7 +1128,7 @@ function buildClassSections(){
   updateFilterSummary();
 }
 function buildClassSection(cls){
-  const topics=topicsForClass(cls),exams=examsForClass(cls),systems=systemsForClass(cls),chapters=chaptersForClass(cls);
+  const topics=topicsForClass(cls),exams=examsForClass(cls),systems=systemsForClass(cls);
   const state=classSelectionState(cls),selCount=topics.filter(t=>selTopics.has(t)).length;
   const safeId=cls.replace(/\s+/g,'_');
   const isOpen=!collapsedClasses.has(cls);
@@ -1012,26 +1137,82 @@ function buildClassSection(cls){
   else if(state==='some'){statusText=`${selCount} of ${topics.length} selected`;statusCls='some';}
   else{statusText='None selected';statusCls='none';}
 
-  let qfHtml='';
-  if(isOpen&&(exams.length>0||systems.length>0||chapters.length>0)){
-    qfHtml=`<div class="class-quick-filters">`;
-    if(chapters.length>0){
-      qfHtml+=`<span class="qf-label">Chapter:</span>`;
-      qfHtml+=chapters.map(ch=>{
-        const allSel=chapterSelState(cls,ch);
-        return`<button class="qf-chip${allSel?' sel':''}" onclick="quickSelectChapter('${esc(cls)}',${ch})">Ch ${ch}</button>`;
-      }).join('');
-    }
-    if(chapters.length>0&&(exams.length>0||systems.length>0))qfHtml+=`<div class="qf-sep"></div>`;
-    if(exams.length>0){qfHtml+=`<span class="qf-label">Exam:</span>`;qfHtml+=exams.map(e=>`<button class="qf-chip" onclick="quickSelectExam('${esc(cls)}','${esc(e)}')">${e}</button>`).join('');}
-    if(exams.length>0&&systems.length>0)qfHtml+=`<div class="qf-sep"></div>`;
-    if(systems.length>0){qfHtml+=`<span class="qf-label">System:</span>`;qfHtml+=systems.filter(s=>s!=='ecg').map(s=>`<button class="qf-chip" onclick="quickSelectSystem('${esc(cls)}','${esc(s)}')">${SYS_NAMES[s]||s}</button>`).join('');}
-    qfHtml+=`</div>`;
+  // ── Filter bar: two rows — Structure row + System row ──
+  let filterBarHtml='';
+  const isCritCare=cls==='220 Critical Care';
+
+  if(isCritCare){
+    // Active pills
+    const pills=[
+      ...[...selChapters].sort((a,b)=>a-b).map(ch=>`<span class="struct-pill">Ch ${ch}<span class="struct-pill-x" onclick="toggleChapter('${esc(cls)}',${ch})">✕</span></span>`),
+      ...[...selUnits].map(u=>`<span class="struct-pill">${u}<span class="struct-pill-x" onclick="toggleUnit('${esc(cls)}','${esc(u)}')">✕</span></span>`),
+    ].join('');
+
+    // Chapter dropdown items
+    const chItems=ALL_CHAPTERS.map(ch=>{
+      const sel=selChapters.has(ch);
+      const cnt=chapterQCount(cls,ch);
+      return`<div class="struct-dropdown-item${sel?' checked':''}" onclick="toggleChapter('${esc(cls)}',${ch})"><span style="display:flex;align-items:center;gap:8px"><span class="struct-dropdown-check">${sel?'✓':''}</span><span>Chapter ${ch}</span></span><span class="struct-dropdown-count">${cnt}q</span></div>`;
+    }).join('');
+
+    // System chips row
+    const sysChips=systems.filter(s=>s!=='ecg').map(s=>{
+      const sel=selSystems.has(s);
+      return`<button class="qf-chip${sel?' sel':''}" onclick="quickSelectSystem('${esc(cls)}','${esc(s)}')">${SYS_NAMES[s]||s}</button>`;
+    }).join('');
+
+    // Unit dropdown items
+    const unitItems=ALL_UNITS.map(u=>{
+      const sel=selUnits.has(u);
+      const cnt=unitQCount(cls,u);
+      return`<div class="struct-dropdown-item${sel?' checked':''}" onclick="toggleUnit('${esc(cls)}','${esc(u)}')"><span style="display:flex;align-items:center;gap:8px"><span class="struct-dropdown-check">${sel?'✓':''}</span><span>${u}</span></span><span class="struct-dropdown-count">${cnt}q</span></div>`;
+    }).join('');
+
+    filterBarHtml=`
+      <div class="struct-bar" style="border-bottom:none;padding-bottom:.3rem">
+        <span class="qf-label">Chapter:</span>
+        <div style="position:relative;display:inline-block">
+          <button class="struct-panel-btn${selChapters.size?' active':''}" onclick="toggleStructDropdown('chDrop_${esc(cls)}')">Select ▾${selChapters.size?` · ${selChapters.size}`:''}</button>
+          <div id="chDrop_${esc(cls)}" class="struct-dropdown" style="display:none;top:calc(100% + 4px);left:0">
+            <div class="struct-section-label">Select chapters</div>${chItems}
+          </div>
+        </div>
+        <div class="struct-sep"></div>
+        <span class="qf-label">Unit:</span>
+        <div style="position:relative;display:inline-block">
+          <button class="struct-panel-btn${selUnits.size?' active':''}" onclick="toggleStructDropdown('unitDrop_${esc(cls)}')">Select ▾${selUnits.size?` · ${selUnits.size}`:''}</button>
+          <div id="unitDrop_${esc(cls)}" class="struct-dropdown" style="display:none;top:calc(100% + 4px);left:0">
+            <div class="struct-section-label">Select units</div>${unitItems}
+          </div>
+        </div>
+        ${pills?'<div class="struct-sep"></div>'+pills:''}
+      </div>
+      ${sysChips?`<div class="struct-bar" style="padding-top:.3rem"><span class="qf-label">System:</span>${sysChips}</div>`:''}
+    `;
+  } else if(systems.length>0){
+    const sysChips=systems.filter(s=>s!=='ecg').map(s=>`<button class="qf-chip" onclick="quickSelectSystem('${esc(cls)}','${esc(s)}')">${SYS_NAMES[s]||s}</button>`).join('');
+    filterBarHtml=`<div class="struct-bar"><span class="qf-label">System:</span>${sysChips}</div>`;
   }
   // Separate ECG image topics from regular topics
   const ecgTopics=topics.filter(t=>BANK.some(q=>q.topic===t&&q.class===cls&&Array.isArray(q.system)&&q.system.includes('ecg')));
   const regTopics=topics.filter(t=>!ecgTopics.includes(t));
-  const makeChip=t=>`<div class="topic-chip ${selTopics.has(t)?'on':'off'}" onclick="toggleTopic('${esc(t)}','${esc(cls)}')" title="${selTopics.has(t)?'Remove from exam':'Add to exam'}"><input type="checkbox" ${selTopics.has(t)?'checked':''} style="pointer-events:none;accent-color:var(--acc)"><span>${t}</span></div>`;
+  const makeChip=t=>{
+    const on=selTopics.has(t);
+    const cov=topicStructureCoverage(cls,t);
+    const isPartial=cov&&cov.inStruct>0&&cov.inStruct<cov.total;
+    const isFull=cov&&cov.inStruct===cov.total&&cov.total>0;
+    const badge=isPartial?`<span class="topic-badge">${cov.inStruct}/${cov.total}</span>`:'';
+    // Three visual states:
+    // on = manually selected OR fully covered by pool
+    // partial = partially covered by pool (not manually selected)
+    // off = not in pool at all
+    let chipCls, checked;
+    if(on||isFull){chipCls='topic-chip on';checked='checked';}
+    else if(isPartial){chipCls='topic-chip partial';checked='';}
+    else{chipCls='topic-chip off';checked='';}
+    const title=on?'Remove from exam':'Add to exam';
+    return `<div class="${chipCls}" onclick="toggleTopic('${esc(t)}','${esc(cls)}')" title="${title}"><input type="checkbox" ${checked} style="pointer-events:none;accent-color:var(--acc)"><span>${t}</span>${badge}</div>`;
+  };
   const regChips=regTopics.map(makeChip).join('');
   const ecgChips=ecgTopics.map(makeChip).join('');
   const ecgSelCount=ecgTopics.filter(t=>selTopics.has(t)).length;
@@ -1040,24 +1221,32 @@ function buildClassSection(cls){
   // regChips + ecgSection rendered separately below
 
   return`<div class="class-section" id="sec-${safeId}">
-    <div class="class-section-header ${isOpen?'open':''}" onclick="toggleClassCollapse('${esc(cls)}')">
+    <div class="class-section-header open">
       <div class="class-section-left">
-        <div class="class-name">${cls}</div>
+        ${activeClass?'':`<div class="class-name">${cls}</div>`}
         <div class="class-status ${statusCls}">${statusText}</div>
       </div>
       <div class="class-section-right">
-        <div class="class-header-btns" onclick="event.stopPropagation()">
+        <div class="class-header-btns">
           <button class="class-btn" onclick="clearClassTopics('${esc(cls)}')">Clear</button>
           <button class="class-btn sel-all" onclick="selectClassTopics('${esc(cls)}')">Select all</button>
         </div>
-        <div class="class-collapse-arrow ${isOpen?'open':''}">▼</div>
       </div>
     </div>
-    <div class="class-section-body ${isOpen?'open':''}">
-      ${qfHtml}
-      <div class="class-topics">
-        <div class="topic-grid">${regChips}</div>
-        ${ecgSection}
+    <div class="class-section-body open">
+      ${filterBarHtml}
+      <div class="topics-toggle" onclick="toggleTopicsBody('${esc(cls)}')">
+        <div class="topics-toggle-left">
+          <span>Topics</span>
+          ${selCount>0?`<span class="topics-toggle-count">${selCount} selected</span>`:''}
+        </div>
+        <span class="topics-toggle-arrow ${openTopics.has(cls)?'open':''}" id="topics-arrow-${safeId}">▾</span>
+      </div>
+      <div class="topics-body ${openTopics.has(cls)?'open':''}" id="topics-body-${safeId}">
+        <div class="class-topics">
+          ${ecgSection}
+          <div class="topic-grid">${regChips}</div>
+        </div>
       </div>
     </div>
   </div>`;
@@ -1076,11 +1265,31 @@ function updateFilterSummary(){
     if(toolbar)toolbar.style.display='';
     if(el)el.textContent=total>0?`${total} topic${total!==1?'s':''} selected · ${available} question${available!==1?'s':''} available`:'';
   }
-}function toggleTopic(t,cls){selTopics.has(t)?selTopics.delete(t):selTopics.add(t);saveSettings();refreshClassSection(cls);}
-function selectClassTopics(cls){topicsForClass(cls).forEach(t=>selTopics.add(t));saveSettings();refreshClassSection(cls);}
-function clearClassTopics(cls){topicsForClass(cls).forEach(t=>selTopics.delete(t));saveSettings();refreshClassSection(cls);}
+}function toggleTopic(t,cls){
+  if(selTopics.has(t)){
+    selTopics.delete(t);
+  } else {
+    selTopics.add(t);
+  }
+  saveSettings();buildClassSections();updateCount();
+}
+function selectClassTopics(cls){
+  topicsForClass(cls).forEach(t=>selTopics.add(t));
+  saveSettings();buildClassSections();updateCount();
+}
+function clearClassTopics(cls){
+  topicsForClass(cls).forEach(t=>selTopics.delete(t));
+  selChapters.clear();
+  selUnits.clear();
+  selSystems.clear();
+  saveSettings();buildClassSections();updateCount();
+}
 function quickSelectExam(cls,exam){const ts=topicsByExam(cls,exam),allSel=ts.every(t=>selTopics.has(t));ts.forEach(t=>allSel?selTopics.delete(t):selTopics.add(t));saveSettings();refreshClassSection(cls);}
-function quickSelectSystem(cls,sys){const ts=topicsBySystem(cls,sys),allSel=ts.every(t=>selTopics.has(t));ts.forEach(t=>allSel?selTopics.delete(t):selTopics.add(t));saveSettings();refreshClassSection(cls);}
+function quickSelectSystem(cls,sys){
+  if(selSystems.has(sys))selSystems.delete(sys);
+  else selSystems.add(sys);
+  saveSettings();buildClassSections();updateCount();
+}
 function selectAllTopics(){const classes=activeClass?[activeClass]:allClasses();classes.forEach(cls=>topicsForClass(cls).forEach(t=>selTopics.add(t)));saveSettings();buildClassSections();updateCount();}
 function clearAllTopics(){const classes=activeClass?[activeClass]:allClasses();classes.forEach(cls=>topicsForClass(cls).forEach(t=>selTopics.delete(t)));saveSettings();buildClassSections();updateCount();}
 function esc(s){return s.replace(/['"\\]/g,'\\$&');}
@@ -1089,19 +1298,28 @@ function esc(s){return s.replace(/['"\\]/g,'\\$&');}
 // COUNT + MODE
 // ═══════════════════════════════════════════════════════════════
 function getFiltered(){
-  if(selTopics.size===0||selFormats.size===0)return[];
+  if(selFormats.size===0)return[];
+  const cls=activeClass||null;
+  const poolIds=cls?getPoolIds(cls):null;
+  // If nothing is selected at all, return empty
+  if(cls&&!poolIds&&selTopics.size===0&&selSystems.size===0&&!selChapters.size&&!selUnits.size)return[];
+  if(!cls&&selTopics.size===0)return[];
   return BANK.filter(q=>{
-    if(!selTopics.has(q.topic))return false;
     if(!selFormats.has(q.type))return false;
-    if(activeClass&&q.class!==activeClass)return false;
+    if(cls&&q.class!==cls)return false;
     if(selStatuses.size>0&&!selStatuses.has(getQStatus(q.id)))return false;
+    // Pool filter: question must be in the combined pool
+    if(poolIds&&!poolIds.has(q.id))return false;
+    // No pool (all classes mode): fall back to topic filter
+    if(!poolIds&&!selTopics.has(q.topic))return false;
     return true;
   });
 }
 function updateCount(){
   const f=getFiltered(),req=parseInt(document.getElementById('num-q').value)||35,will=Math.min(req,f.length);
   const el=document.getElementById('q-count-info'),btn=document.getElementById('start-btn');
-  if(selTopics.size===0){el.textContent='Select topics above to get started.';el.className='q-count-info';btn.disabled=true;}
+  const hasSelection=selTopics.size>0||selChapters.size>0||selUnits.size>0||selSystems.size>0;
+  if(!hasSelection){el.textContent='Select chapters, units, systems, or topics above to get started.';el.className='q-count-info';btn.disabled=true;}
   else if(f.length===0){el.textContent='No questions match the selected formats — try adjusting the format filter.';el.className='q-count-info empty';btn.disabled=true;}
   else{el.textContent=`${f.length} question${f.length!==1?'s':''} available · Will generate ${will} question${will!==1?'s':''} for this exam`;el.className='q-count-info ready';btn.disabled=false;}
   updateFilterSummary();
@@ -1115,11 +1333,61 @@ function updateTimerPreview(){const mpq=parseFloat(document.getElementById('mins
 // START EXAM
 // ═══════════════════════════════════════════════════════════════
 function shuffle(a){return a.slice().sort(()=>Math.random()-.5);}
+function fisherYates(a){
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+function shuffleQuestion(q){
+  // Deep clone so we don't mutate the original BANK entry
+  const sq=JSON.parse(JSON.stringify(q));
+  if(sq.type==='mcq'||sq.type==='sata'){
+    const n=sq.opts.length;
+    const order=fisherYates([...Array(n).keys()]); // e.g. [2,0,3,1]
+    sq.opts=order.map(i=>sq.opts[i]);
+    if(sq.optRationales)sq.optRationales=order.map(i=>sq.optRationales[i]);
+    // Remap correct indices: find where each original correct index ended up
+    const invOrder=[];order.forEach((orig,newIdx)=>invOrder[orig]=newIdx);
+    sq.correct=sq.correct.map(c=>invOrder[c]);
+    if(sq.type==='sata')sq.correct=sq.correct.sort((a,b)=>a-b);
+  }
+  else if(sq.type==='bowtie'){
+    // Shuffle actions
+    const na=sq.actions.length;
+    const aOrder=fisherYates([...Array(na).keys()]);
+    sq.actions=aOrder.map(i=>sq.actions[i]);
+    const aInv=[];aOrder.forEach((orig,ni)=>aInv[orig]=ni);
+    sq.correctActions=sq.correctActions.map(c=>aInv[c]);
+    // Shuffle conditions
+    const nc=sq.condition.length;
+    const cOrder=fisherYates([...Array(nc).keys()]);
+    sq.condition=cOrder.map(i=>sq.condition[i]);
+    const cInv=[];cOrder.forEach((orig,ni)=>cInv[orig]=ni);
+    sq.correctCondition=cInv[sq.correctCondition];
+    // Shuffle monitor
+    const nm=sq.monitor.length;
+    const mOrder=fisherYates([...Array(nm).keys()]);
+    sq.monitor=mOrder.map(i=>sq.monitor[i]);
+    const mInv=[];mOrder.forEach((orig,ni)=>mInv[orig]=ni);
+    sq.correctMonitor=sq.correctMonitor.map(c=>mInv[c]);
+  }
+  else if(sq.type==='matrix'){
+    const nr=sq.rows.length;
+    const rOrder=fisherYates([...Array(nr).keys()]);
+    sq.rows=rOrder.map(i=>sq.rows[i]);
+    // correct is parallel to rows — remap
+    const rInv=[];rOrder.forEach((orig,ni)=>rInv[orig]=ni);
+    const newCorrect=new Array(nr);
+    rOrder.forEach((orig,ni)=>newCorrect[ni]=sq.correct[orig]);
+    sq.correct=newCorrect;
+  }
+  return sq;
+}
 function startExam(){
   const f=getFiltered();if(!f.length){alert('Please select at least one topic.');return;}
   const req=Math.min(parseInt(document.getElementById('num-q').value)||35,f.length);
   const pool=document.getElementById('q-order').value==='shuffle'?shuffle(f):[...f];
-  activeQs=pool.slice(0,req);curQ=0;answers={};selections={};guessed={};elim={};highlights={};examEnded=false;hlMode=false;
+  activeQs=pool.slice(0,req).map(shuffleQuestion);curQ=0;answers={};selections={};guessed={};elim={};highlights={};examEnded=false;hlMode=false;
   if(examMode==='test'){const mpq=parseFloat(document.getElementById('mins-per-q').value)||2;timerTotal=Math.round(mpq*req*60);timerLeft=timerTotal;}
   try{localStorage.removeItem(SK);}catch(e){}
   document.getElementById('start-screen').style.display='none';
@@ -1545,8 +1813,6 @@ function moveItem(qid,idx,zi){
   if(zi>=0){if(!store[qid][zi])store[qid][zi]=[];store[qid][zi].push(idx);}
   saveSession();renderQ();
 }
-
-// ── Ordering drag handlers ──
 let ordDragSrc=null;
 function ordDragStart(e,qid,pos){ordDragSrc={qid,pos};e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('dragging');}
 function ordDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';}
@@ -1560,11 +1826,8 @@ function ordDrop(e,qid,targetPos){
   if(examMode==='tutor'&&answers[qid]!==undefined)return;
   const store=examMode==='tutor'?selections:answers;
   const cur=[...(store[qid]||q.items.map((_,i)=>i))];
-  const moved=cur.splice(srcPos,1)[0];
-  cur.splice(targetPos,0,moved);
-  store[qid]=cur;
-  ordDragSrc=null;
-  saveSession();renderQ();
+  const moved=cur.splice(srcPos,1)[0];cur.splice(targetPos,0,moved);
+  store[qid]=cur;ordDragSrc=null;saveSession();renderQ();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1717,7 +1980,7 @@ function showResults(){
         <div style="font-size:12px;color:var(--tl);margin-top:4px;text-align:right">
           ${show.length>=3?`Trend: ${show[show.length-1].pct>show[0].pct?'📈 improving':'📉 declining'} · `:''}Avg: ${Math.round(show.reduce((a,e)=>a+e.pct,0)/show.length)}%
         </div>
-        <button class="filt-btn muted" style="margin-top:.75rem;font-size:11px" onclick="if(confirm('Clear all exam history?')){localStorage.removeItem(SK_HIST);showResults();}">Clear history</button>
+        <button class="filt-btn muted" style="margin-top:.75rem;font-size:11px" onclick="if(confirm('Clear all exam history and question status?')){localStorage.removeItem(SK_HIST);qStatus={};saveQStatus();buildLandingCards&&buildLandingCards();showResults();}">Clear history</button>
       </div>
     </div>`;
   }
