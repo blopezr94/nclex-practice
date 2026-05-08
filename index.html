@@ -83,7 +83,7 @@
 .mock-cancel-btn{padding:12px 20px;background:var(--bgs);color:var(--ts);border:.5px solid var(--bd);border-radius:var(--r8);font-family:inherit;font-size:14px;cursor:pointer;transition:all .15s}
 .mock-cancel-btn:hover{background:var(--bgd)}
 /* Timer */
-.exam-timer{font-family:'DM Mono',monospace;font-size:13px;color:var(--ts);padding:4px 10px;background:var(--bgs);border-radius:var(--r20);border:.5px solid var(--bd)}
+.exam-timer{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--acc);padding:3px 9px;background:var(--acc-l);border-radius:var(--r20);border:.5px solid var(--acc-m);letter-spacing:.01em;transition:opacity .15s}
 .exam-timer.warn{color:var(--warn);border-color:var(--warn-b);background:var(--warn-bg)}
 .exam-timer.crit{color:var(--bad);border-color:var(--bad-b);background:var(--bad-bg);animation:pulse 1s infinite}
 /* Results category breakdown */
@@ -260,8 +260,8 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
 .nav-summary-text{font-size:12px;color:var(--ts);white-space:nowrap;font-family:'DM Mono',monospace}
 .nav-summary-badge{font-size:11px;padding:2px 7px;border-radius:10px;white-space:nowrap}
 .nav-summary-toggle{font-size:11px;color:var(--tl);flex-shrink:0;transition:transform .2s}
-.nav-calc-btn{width:32px;height:32px;border-radius:var(--r8);background:var(--acc);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
-.nav-calc-btn:hover{background:var(--acc-d)}
+.nav-calc-btn{width:32px;height:32px;border-radius:var(--r8);background:var(--bgs);color:var(--ts);border:.5px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.nav-calc-btn:hover{background:var(--bgd);color:var(--tp);border-color:var(--bds)}
 .nav-calc-btn svg{width:16px;height:16px}
 .nav-summary-toggle.open{transform:rotate(180deg)}
 .nav-dots-panel{display:none;padding:10px 12px;background:var(--bgs);border:.5px solid var(--bd);border-top:none;border-radius:0 0 var(--r8) var(--r8);margin-top:-1px;overflow:hidden}
@@ -287,7 +287,7 @@ p{font-size:14px;color:var(--ts);line-height:1.6}
 
 /* Question card */
 .q-card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r16);padding:1.5rem;margin-top:.75rem;box-shadow:var(--shadow)}
-.q-card.guessed{border-color:var(--guess-b)}
+.q-card.guessed{border-color:var(--guess-b);border-left:4px solid var(--guess);}
 .q-labels{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
 .q-labels.hidden{display:none}
 .ql{font-size:11px;padding:3px 9px;border-radius:var(--r20);font-weight:500;display:inline-flex;align-items:center}
@@ -798,6 +798,7 @@ function loadSettings(){
   }catch(e){}
 }
 function saveSession(){
+  if(activeMockExam) return; // don't overwrite regular session slot during mock exam
   try{localStorage.setItem(SK,JSON.stringify({ids:activeQs.map(q=>q.id),curQ,answers,selections,guessed,elim,highlights,optOrders,mode:examMode,ended:examEnded,timerLeft,timerTotal}));}catch(e){}
 }
 function loadSession(){
@@ -1287,7 +1288,21 @@ function startExam(){
 function startTimer(){clearInterval(timerInterval);timerInterval=setInterval(()=>{timerLeft--;saveSession();updateTimerEl();if(timerLeft<=0){clearInterval(timerInterval);finalizeTest(true);}},1000);}
 function stopTimer(){clearInterval(timerInterval);}
 function fmt(s){const m=Math.floor(s/60),sec=s%60;return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
-function updateTimerEl(){const el=document.getElementById('timer-digits'),bar=document.getElementById('timer-bar');if(!el||!bar)return;el.textContent=fmt(timerLeft);const pct=timerLeft/timerTotal;bar.className='timer-wrap'+(pct<=0.1?' danger':pct<=0.25?' warn':'');}
+function updateTimerEl(){
+  const el=document.getElementById('timer-digits'),bar=document.getElementById('timer-bar');
+  if(el) el.textContent=fmt(timerLeft);
+  if(bar){const pct=timerLeft/timerTotal;bar.className='timer-wrap'+(pct<=0.1?' danger':pct<=0.25?' warn':'');}
+  // Also update nav timer display for regular test mode
+  if(!activeMockExam&&examMode==='test'&&!examEnded){
+    const navEl=document.getElementById('exam-timer-display');
+    if(navEl){
+      navEl.style.visibility='visible';navEl.style.opacity='1';
+      const mins=Math.floor(timerLeft/60),secs=timerLeft%60;
+      navEl.textContent=`⏱ ${mins}:${secs.toString().padStart(2,'0')}`;
+      navEl.className='exam-timer'+(timerLeft<300?' warn':'')+(timerLeft<60?' crit':'');
+    }
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════
 // HIGHLIGHT HELPERS
@@ -1301,7 +1316,7 @@ function applyHighlights(text,qid,zone){
   let result=text;
   sorted.forEach(({start,end,phrase})=>{
     if(start<0||end>result.length||start>=end)return;
-    result=result.slice(0,start)+'<mark>'+result.slice(start,end)+'</mark>'+result.slice(end);
+    result=result.slice(0,start)+`<mark onclick="handleMarkClick(event,${qid},'${zone}',${start},${end})" style="cursor:pointer" title="Click to remove highlight">` +result.slice(start,end)+'</mark>'+result.slice(end);
   });
   return result;
 }
@@ -1311,16 +1326,11 @@ function handleHighlight(e,qid,zone){
   if(!sel||sel.isCollapsed)return;
   const phrase=sel.toString();
   if(!phrase||phrase.trim().length<1)return;
-  // Get offset within the text node's plain text
-  // We work relative to the element's textContent to get a stable offset
   const range=sel.getRangeAt(0);
   const container=range.commonAncestorContainer;
-  // Find the stem/opt-text element that contains this selection
   const targetEl=container.nodeType===3?container.parentElement:container;
   const rootEl=targetEl.closest('.stem,.opt-text');
   if(!rootEl){sel.removeAllRanges();return;}
-  // Calculate start offset relative to rootEl's full text
-  const fullText=rootEl.textContent;
   const preRange=document.createRange();
   preRange.setStart(rootEl,0);
   preRange.setEnd(range.startContainer,range.startOffset);
@@ -1328,9 +1338,27 @@ function handleHighlight(e,qid,zone){
   const end=start+phrase.length;
   if(!highlights[qid])highlights[qid]={};
   if(!highlights[qid][zone])highlights[qid][zone]=[];
-  // Store as offset object
-  highlights[qid][zone].push({start,end,phrase:phrase.trim()});
+  // Check if this overlaps an existing highlight — if so, remove it instead
+  const existing=highlights[qid][zone];
+  const overlapIdx=existing.findIndex(h=>h.start<end&&h.end>start);
+  if(overlapIdx>=0){
+    highlights[qid][zone].splice(overlapIdx,1);
+    if(!highlights[qid][zone].length)delete highlights[qid][zone];
+    if(!Object.keys(highlights[qid]||{}).length)delete highlights[qid];
+  } else {
+    highlights[qid][zone].push({start,end,phrase:phrase.trim()});
+  }
   sel.removeAllRanges();
+  saveSession();renderQ();
+}
+function handleMarkClick(e,qid,zone,start,end){
+  // Click on <mark> to remove that highlight
+  if(!hlMode)return;
+  e.stopPropagation();
+  if(!highlights[qid]||!highlights[qid][zone])return;
+  highlights[qid][zone]=highlights[qid][zone].filter(h=>!(h.start===start&&h.end===end));
+  if(!highlights[qid][zone].length)delete highlights[qid][zone];
+  if(!Object.keys(highlights[qid]||{}).length)delete highlights[qid];
   saveSession();renderQ();
 }
 function clearHighlights(qid){delete highlights[qid];saveSession();renderQ();}
@@ -1352,14 +1380,14 @@ function renderQ(){
   let h=`<div class="exam-header">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
       <div style="font-size:13px;color:var(--ts)">${isTutor?'📖 Tutor':'🎯 Test'}${examEnded?' · Reviewing':''}</div>
-      ${examMode==='test'&&!examEnded?`<div id="timer-bar" class="timer-wrap"><div><div class="timer-digits" id="timer-digits">${fmt(timerLeft)}</div><div class="timer-context">remaining</div></div></div>`:''}
+      ${examMode==='test'&&!examEnded?`<div id="timer-bar" style="display:none"><div class="timer-digits" id="timer-digits">${fmt(timerLeft)}</div></div>`:''}
     </div>
     <div class="nav-dots-wrap">
       ${(()=>{
         const nTotal=activeQs.length,nAnswered=Object.keys(answers).length,nGuessed=Object.keys(guessed).length;
         const pct=Math.round(nAnswered/nTotal*100);
         const progColor=examMode==="tutor"?"var(--tutor-m)":"var(--test-m)";
-        let badges=nGuessed>0?`<span class="nav-summary-badge" style="background:var(--guess-bg);color:var(--guess)">? ${nGuessed} guessed</span>`:"";
+        let badges=nGuessed>0?`<span class="nav-summary-badge" style="background:var(--guess-bg);color:var(--guess)">${nGuessed} guessed</span>`:"";
         const dots=activeQs.map((qq,i)=>{
           let c="dot";if(i===curQ)c+=" cur";
           else if((isTutor||examEnded)&&answers[qq.id]!==undefined){const sc=scoreQ(qq,answers[qq.id]);c+=sc.detail==="full"?" dok":sc.detail==="partial"?" dpart":" dbad";}
@@ -1372,10 +1400,11 @@ function renderQ(){
           <div class="nav-summary-left">
             <span class="nav-summary-text">Q${curQ+1}&nbsp;/&nbsp;${nTotal}</span>
             <div class="nav-summary-prog"><div class="nav-summary-prog-fill" style="width:${pct}%;background:${progColor}"></div></div>
-            <span class="nav-summary-text">${nAnswered} answered</span>${badges}
+            ${(examEnded||(examMode==='tutor'&&answers[activeQs[curQ].id]!==undefined))?`<span class="nav-summary-text">${nAnswered} answered</span>${badges}`:''}
           </div>
           <div style="display:flex;align-items:center;gap:6px">
-            <span id="exam-timer-display" class="exam-timer" style="display:none"></span>
+            <span id="exam-timer-display" class="exam-timer" style="visibility:hidden;opacity:0"></span>
+            ${(!examEnded)?`<button class="nav-calc-btn ${hlMode?'hl-active':''}" onclick="event.stopPropagation();toggleHlMode()" title="${hlMode?'Highlight ON':'Highlight mode'}" style="${hlMode?'background:var(--hl);color:var(--hl-text);border-color:var(--warn-b);font-size:15px':''}">🖊</button><button class="nav-calc-btn ${guessed[activeQs[curQ].id]?'guess-active':''}" onclick="event.stopPropagation();toggleGuess(${activeQs[curQ].id})" title="${guessed[activeQs[curQ].id]?'Remove guess mark':'Mark as guessed'}" style="${guessed[activeQs[curQ].id]?'background:var(--guess-bg);color:var(--guess);border-color:var(--guess-b)':''}">?</button>`:''}
             <button class="nav-calc-btn" onclick="event.stopPropagation();if(typeof toggleCalc==='function')toggleCalc()" title="Calculator">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2"/>
@@ -1401,6 +1430,10 @@ function renderQ(){
   </div>`;
   h+=buildQ(q,showFeedback);
   document.getElementById('exam-screen').innerHTML=h;
+  restoreNavDots();
+  // Immediately restore timer visibility — innerHTML rebuild resets it
+  if(activeMockExam && !examEnded){updateTimerDisplay();}
+  else if(examMode==='test' && !examEnded && timerLeft>0){updateTimerEl();}
 }
 
 function buildQ(q,showFeedback){
@@ -1421,17 +1454,13 @@ function buildQ(q,showFeedback){
           <span class="ql ql-topic">${q.subtopic||q.topic}</span>
           <span class="ql ql-bloom">${q.bloom}</span>
           <span class="ql ql-class">${q.class}</span>
-          ${isGuessed?`<span class="ql ql-guess">? Marked as guessed</span>`:''}
         </div>`:''}
       </div>
-      <div class="action-btns">
-        ${!locked?`<button class="hl-btn ${hlMode?'active':''}" onclick="toggleHlMode()" title="Highlight mode">🖊 Highlight</button>${hasHl?`<button class="hl-btn" onclick="clearHighlights(${q.id})" title="Clear all highlights">✕ Clear</button>`:''}`:''}
-        <button class="icon-btn ${isGuessed?'guess-active':''}" onclick="toggleGuess(${q.id})">? ${isGuessed?'Guessing':'Mark as guessed'}</button>
-      </div>
+      <div class="action-btns"></div>
     </div>`;
 
 
-  if(isGuessed&&!showFeedback){h+=`<div class="guess-panel">? Marked as guessed — will be highlighted in your results.</div>`;}
+  // guess state shown via card left border + nav toolbar button — no banner needed
 
 
 
@@ -1617,9 +1646,9 @@ function buildQ(q,showFeedback){
       // Right side
       const canNext=hasAnswer(q,answers[q.id]);
       if(curQ<activeQs.length-1){
-        btnRight.push(`<button class="btn btn-p" ${canNext?'':'disabled'} onclick="${canNext?'nextQ()':''}">${canNext?'Next →':'Select an answer'}</button>`);
+        btnRight.push(`<button class="btn btn-p" id="next-btn" ${canNext?'':'disabled'} onclick="${canNext?'nextQ()':''}">${canNext?'Next →':'Select an answer'}</button>`);
       } else {
-        btnRight.push(`<button class="btn btn-p" ${canNext?'':'disabled'} onclick="${canNext?'finalizeTest(false)':''}">${canNext?'Submit exam':'Select an answer'}</button>`);
+        btnRight.push(`<button class="btn btn-p" id="next-btn" ${canNext?'':'disabled'} onclick="${canNext?'finalizeTest(false)':''}">${canNext?'Submit exam':'Select an answer'}</button>`);
       }
     } else {
       // Reviewing after test
@@ -1753,9 +1782,22 @@ function optClick(e,qid,idx,type){
 function btToggle(qid,idx,field,max){if(examMode==='tutor'&&answers[qid]!==undefined)return;const store=examMode==='tutor'?selections:answers;if(!store[qid])store[qid]={actions:[],condition:null,monitor:[]};const arr=store[qid][field]||[];if(arr.includes(idx))store[qid][field]=arr.filter(x=>x!==idx);else if(arr.length<max)store[qid][field]=[...arr,idx];saveSession();renderQ();}
 function btSet(qid,idx,field){if(examMode==='tutor'&&answers[qid]!==undefined)return;const store=examMode==='tutor'?selections:answers;if(!store[qid])store[qid]={actions:[],condition:null,monitor:[]};store[qid][field]=idx;saveSession();renderQ();}
 function mxSel(qid,row,col){if(examMode==='tutor'&&answers[qid]!==undefined)return;const store=examMode==='tutor'?selections:answers;if(!store[qid])store[qid]={};store[qid][row]=col;saveSession();renderQ();}
-function fiSet(qid,val){if(examMode==='tutor'&&answers[qid]!==undefined)return;if(examMode==='tutor'){selections[qid]=val;}else{answers[qid]=val;}saveSession();
-  // Re-render to update next button state in test mode
-  if(examMode==='test'){const q=activeQs[curQ];const btn=document.querySelector('.btn-p[disabled]');if(btn)renderQ();}
+function fiSet(qid,val){
+  if(examMode==='tutor'&&answers[qid]!==undefined)return;
+  if(examMode==='tutor'){selections[qid]=val;}else{answers[qid]=val;}
+  saveSession();
+  // Update Next button state without re-rendering (preserves input focus)
+  // Works for both test and tutor mode, uses answers in test, selections in tutor
+  const nextBtn=document.getElementById('next-btn');
+  if(nextBtn){
+    const q=activeQs[curQ];
+    const currentAns=examMode==='tutor'?selections[q.id]:answers[q.id];
+    nextBtn.disabled=!hasAnswer(q,currentAns);
+    if(!nextBtn.disabled){
+      nextBtn.textContent=curQ<activeQs.length-1?'Next →':(examMode==='test'?'Submit exam':'Finish & see results');
+      nextBtn.onclick=curQ<activeQs.length-1?nextQ:(examMode==='test'?()=>finalizeTest(false):checkTutorFinish);
+    }
+  }
 }
 
 function toggleElim(e,qid,idx){
@@ -1807,7 +1849,7 @@ function backToSetup(){
   if(mockTimerInterval){clearInterval(mockTimerInterval);mockTimerInterval=null;}
   if(activeMockExam&&!examEnded){activeMockExam=null;mockExamTimer=null;}
   const timerEl=document.getElementById('exam-timer-display');
-  if(timerEl) timerEl.style.display='none';
+  if(timerEl) timerEl.style.visibility='hidden';timerEl.style.opacity='0';
   try{localStorage.removeItem(SK);}catch(e){}
   activeQs=[];curQ=0;answers={};selections={};guessed={};elim={};highlights={};optOrders={};examEnded=false;hlMode=false;
   hideAll();
@@ -1827,7 +1869,13 @@ function confirmEnd(){
   else{finalizeTest(false);}
 }
 
-function finalizeTest(timedOut){stopTimer();examEnded=true;saveSession();showResults();}
+function finalizeTest(timedOut){
+  stopTimer();
+  examEnded=true;
+  const navEl=document.getElementById('exam-timer-display');
+  if(navEl) navEl.style.visibility='hidden';navEl.style.opacity='0';
+  saveSession();showResults();
+}
 
 // ── RESULTS ──────────────────────────────────────────────────────
 function showResults(){
@@ -1957,6 +2005,20 @@ function toggleNavDots(el){
   const isOpen=panel.classList.toggle('open');
   if(arrow)arrow.classList.toggle('open',isOpen);
   el.style.borderRadius=isOpen?'var(--r8) var(--r8) 0 0':'var(--r8)';
+  try{sessionStorage.setItem('navDotsOpen',isOpen?'1':'0');}catch(e){}
+}
+function restoreNavDots(){
+  try{
+    const was=sessionStorage.getItem('navDotsOpen');
+    if(was==='1'){
+      const panel=document.getElementById('nav-dots-panel');
+      const arrow=document.querySelector('.nav-summary-toggle');
+      const wrap=document.querySelector('.nav-summary');
+      if(panel){panel.classList.add('open');}
+      if(arrow){arrow.classList.add('open');}
+      if(wrap){wrap.style.borderRadius='var(--r8) var(--r8) 0 0';}
+    }
+  }catch(e){}
 }
 
 // ── CALCULATOR ───────────────────────────────────────────────────
@@ -1979,7 +2041,7 @@ function closeModal(){document.getElementById('modal').style.display='none';}
 // ═══════════════════════════════════════════════════════════════
 // MOCK EXAMS
 // ═══════════════════════════════════════════════════════════════
-const MOCK_EXAMS = {"1": [102, 103, 123, 228, 243, 376, 386, 398, 440, 470, 510, 527, 530, 551, 558, 586, 600, 602, 605, 638, 667, 672, 673, 707, 713, 731, 764, 773, 775, 776, 803, 804, 806, 835, 852, 869, 878, 901, 910, 915, 917, 918, 919, 921, 935, 944, 975, 981, 986, 990], "2": [101, 106, 110, 119, 211, 225, 348, 366, 448, 453, 456, 457, 461, 467, 482, 528, 537, 567, 572, 573, 579, 611, 641, 654, 664, 683, 687, 729, 742, 774, 779, 797, 808, 834, 848, 849, 851, 870, 904, 909, 912, 943, 946, 949, 954, 956, 959, 970, 985, 992], "3": [112, 230, 246, 331, 338, 345, 365, 373, 437, 447, 454, 489, 492, 496, 521, 536, 549, 550, 576, 616, 617, 626, 634, 639, 651, 668, 675, 690, 692, 699, 720, 733, 743, 750, 757, 765, 819, 839, 846, 854, 859, 868, 911, 922, 936, 937, 945, 955, 967, 991]};
+const MOCK_EXAMS = {"1": [640, 600, 832, 796, 493, 872, 539, 363, 337, 936, 237, 991, 118, 615, 837, 668, 876, 725, 537, 592, 921, 339, 223, 990, 215, 679, 972, 957, 488, 504, 744, 453, 813, 915, 605, 712, 581, 989, 107, 839, 639, 897, 518, 982, 690, 951, 233, 550, 646, 681], "2": [963, 852, 631, 748, 564, 538, 733, 869, 576, 221, 334, 920, 956, 898, 103, 741, 541, 572, 940, 706, 789, 923, 780, 586, 858, 900, 105, 651, 708, 451, 364, 692, 816, 913, 633, 487, 846, 568, 536, 673, 707, 916, 510, 626, 627, 746, 677, 449, 670, 755], "3": [934, 696, 907, 835, 450, 358, 703, 879, 210, 922, 567, 775, 902, 914, 754, 468, 529, 531, 983, 377, 783, 992, 777, 919, 205, 694, 935, 603, 689, 458, 492, 359, 710, 232, 645, 901, 821, 430, 680, 360, 461, 521, 641, 610, 890, 684, 801, 546, 959, 743]};
 const MOCK_BLUEPRINT = {"Trauma": 7, "Neuro": 6, "Renal": 6, "DKA": 6, "Respiratory": 5, "Cardiac": 5, "Shock": 5, "Sepsis": 2, "Thyroid Storm": 2, "Organ Donation": 2, "Dosage Calculation": 2, "Pain & Sedation": 2};
 const SK_MOCK = 'nclex_mock_scores_v1';
 const MOCK_DURATION = 100 * 60; // 100 minutes in seconds
@@ -1994,9 +2056,10 @@ function loadMockScores(){
 }
 function saveMockScore(examNum, score, total, breakdown){
   const scores = loadMockScores();
-  if(!scores[examNum]) scores[examNum] = [];
-  scores[examNum].unshift({score, total, pct: Math.round(score/total*100), breakdown, date: new Date().toLocaleDateString()});
-  if(scores[examNum].length > 5) scores[examNum].pop(); // keep last 5
+  const key = String(examNum); // always use string key — JSON always stringifies keys
+  if(!scores[key]) scores[key] = [];
+  scores[key].unshift({score, total, pct: Math.round(score/total*100), breakdown, date: new Date().toLocaleDateString()});
+  if(scores[key].length > 5) scores[key].pop();
   localStorage.setItem(SK_MOCK, JSON.stringify(scores));
 }
 
@@ -2006,7 +2069,7 @@ function buildMockExamSection(){
     <div class="mock-section-title">Mock Exams</div>
     <div class="mock-btns">`;
   [1,2,3].forEach(n => {
-    const examScores = scores[n] || [];
+    const examScores = scores[String(n)] || [];
     const best = examScores.length ? Math.max(...examScores.map(s=>s.pct)) : null;
     const last = examScores.length ? examScores[0] : null;
     const scoreHtml = last
@@ -2030,7 +2093,7 @@ function refreshMockSection(){
 function openMockModal(examNum){
   pendingMockExam = examNum;
   const scores = loadMockScores();
-  const examScores = scores[examNum] || [];
+  const examScores = scores[String(examNum)] || [];
 
   document.getElementById('mock-modal-title').textContent = `Mock Exam ${examNum}`;
 
@@ -2116,8 +2179,6 @@ function startMockExam(){
   }, 1000);
 
   // Show timer display in nav
-  const timerEl = document.getElementById('exam-timer-display');
-  if(timerEl) timerEl.style.display = 'inline-flex';
   updateTimerDisplay();
 
   // Clear saved session
@@ -2138,12 +2199,13 @@ function updateTimerDisplay(){
   const secs = mockExamTimer % 60;
   el.textContent = `⏱ ${mins}:${secs.toString().padStart(2,'0')}`;
   el.className = 'exam-timer' + (mockExamTimer < 300 ? ' warn' : '') + (mockExamTimer < 60 ? ' crit' : '');
+  el.style.visibility='visible';el.style.opacity='1';
 }
 
 function endMockExam(timeUp=false){
   if(mockTimerInterval){ clearInterval(mockTimerInterval); mockTimerInterval=null; }
   const timerEl = document.getElementById('exam-timer-display');
-  if(timerEl) timerEl.style.display='none';
+  if(timerEl) timerEl.style.visibility='hidden';timerEl.style.opacity='0';
 
   examEnded = true;
   examMode = 'test';
@@ -2185,7 +2247,7 @@ function endMockExam(timeUp=false){
 function showMockResults(correct, total, breakdown, timeUp){
   const pct = Math.round(correct/total*100);
   const scores = loadMockScores();
-  const examScores = scores[activeMockExam] || [];
+  const examScores = scores[String(activeMockExam)] || [];
   const best = examScores.length ? Math.max(...examScores.map(s=>s.pct)) : pct;
   const attempts = examScores.length;
 
@@ -2241,7 +2303,7 @@ function exitMockExam(){
   mockExamTimer = null;
   activeMockExam = null;
   const timerEl = document.getElementById('exam-timer-display');
-  if(timerEl) timerEl.style.display='none';
+  if(timerEl) timerEl.style.visibility='hidden';timerEl.style.opacity='0';
   activeQs=[]; answers={}; guessed={}; examEnded=false;
   saveSettings();
   refreshMockSection();
@@ -2358,11 +2420,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEcgZoom();clos
 <div class="mock-modal-overlay" id="mock-modal-overlay" onclick="handleMockOverlayClick(event)">
   <div class="mock-modal" id="mock-modal">
     <div class="mock-modal-title" id="mock-modal-title">Mock Exam 1</div>
-    <div class="mock-modal-sub">50 questions · 100 minutes · Blueprint-proportioned</div>
-    <div class="mock-modal-stats">
-      <div class="mock-stat"><div class="mock-stat-label">Questions</div><div class="mock-stat-val">50</div></div>
-      <div class="mock-stat"><div class="mock-stat-label">Time Limit</div><div class="mock-stat-val">100 min</div></div>
-    </div>
+    <div class="mock-modal-sub">50 questions · 100 min · Blueprint-proportioned</div>
     <div id="mock-prev-scores-container"></div>
     <div class="mock-modal-breakdown">
       <div class="mock-modal-breakdown-title">Blueprint Breakdown</div>
